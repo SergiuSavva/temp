@@ -70,9 +70,8 @@ def validate_project(video):
     # Master file
     try:
         s3_response = validate_file(video['master_path'], 'video')
-        # print(f"Object exist {row['master_path']}")
-        # if video['master_size'] != s3_response['ContentLength']:
-        #     status['master'] = 'Wrong size'
+        if video['master_size'] != s3_response['ContentLength']:
+            status['master'] = 'Wrong size'
 
     except MissingDataError:
         status['master'] = 'Data missing'
@@ -152,12 +151,8 @@ def get_items(account_id):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor(dictionary=True)
 
-    # query = "SELECT * from videos where (master_path != '' and master_path IS NOT NULL and master_path != 'not_found') and account_id=%s"
-    query = "SELECT * from videos_with_size where account_id=%s LIMIT %d OFFSET %d"
-    # query = "SELECT * from videos where account_id=%s"
-    limit = os.environ.get('DB_LIMIT')
-    offset = limit * int(os.environ.get('DB_OFFSET_ITERATION'))
-    adr = (account_id, limit, offset)
+    query = "SELECT * from videos_with_size where account_id=%s"
+    adr = (account_id,)
 
     cursor.execute(query, adr)
     results = cursor.fetchall()
@@ -186,4 +181,4 @@ if __name__ == '__main__':
     generate_csv(errors)
     print(f"total processed: {total};")
     print(json.dumps(errors, sort_keys=True, indent=4))
-    print(datetime.now()-begin_time)
+    print(datetime.now() - begin_time)
