@@ -153,7 +153,7 @@ def get_items(account_id):
     cursor = cnx.cursor(dictionary=True)
 
     # query = "SELECT * from videos where (master_path != '' and master_path IS NOT NULL and master_path != 'not_found') and account_id=%s"
-    query = "SELECT * from videos_with_size where account_id=%s LIMIT %s OFFSET %s"
+    query = "SELECT * from videos_with_size where account_id=%s LIMIT %d OFFSET %d"
     # query = "SELECT * from videos where account_id=%s"
     limit = os.environ.get('DB_LIMIT')
     offset = limit * int(os.environ.get('DB_OFFSET_ITERATION'))
@@ -168,6 +168,7 @@ def get_items(account_id):
 
 if __name__ == '__main__':
     begin_time = datetime.now()
+    print(begin_time)
     print_hi('PyCharm')
 
     items = get_items(account_id)
@@ -185,4 +186,4 @@ if __name__ == '__main__':
     generate_csv(errors)
     print(f"total processed: {total};")
     print(json.dumps(errors, sort_keys=True, indent=4))
-    print(datetime.now())
+    print(datetime.now()-begin_time)
